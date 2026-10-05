@@ -1,2 +1,2 @@
-# e-commerse-nest-js
-
+# Prisma installation
+# e-commerce-backed
