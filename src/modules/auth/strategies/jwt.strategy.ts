@@ -24,16 +24,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         email: true,
         fullName: true,
         userName: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
         password: false,
+        role: true,
       },
     });
 
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
+
     return user;
   }
 }

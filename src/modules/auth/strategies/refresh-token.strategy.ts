@@ -1,9 +1,7 @@
-// refresh token strategy
-
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import * as bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PrismaService } from '../../../prisma/prisma.service.js';
@@ -22,16 +20,12 @@ export class RefreshTokenStrategy extends PassportStrategy(
       ignoreExpiration: false,
       secretOrKey: configService.get<string>('JWT_REFRESH_SECRET'),
       passReqToCallback: true,
-    } as any);
+    });
   }
 
   async validate(req: Request, payload: { sub: string; email: string }) {
-    console.log('RefreshTokenStrategy.validate called');
-    console.log('Payload', { sub: payload.sub, email: payload.email });
-
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-      console.log('No authorization header found');
       throw new UnauthorizedException('Refresh token not provided');
     }
 
@@ -58,12 +52,12 @@ export class RefreshTokenStrategy extends PassportStrategy(
       throw new UnauthorizedException('Invalid refresh token');
     }
 
-    const refreshTokenMatches = await bcrypt.compare(
+    const refreshTokenMatch = await bcrypt.compare(
       refreshToken,
       user.refreshToken,
     );
 
-    if (!refreshTokenMatches) {
+    if (!refreshTokenMatch) {
       throw new UnauthorizedException('Invalid refresh does not match');
     }
 

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -9,7 +10,7 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { GetUser } from '../../commen/decorator/get-user.decorator.js';
 import { JwtAuthGuard } from '../../commen/guards/jwt-auth.guard.js';
-import { AuthService } from './AuthService.js';
+import { AuthService } from './auth.service.js';
 import { AuthResponseDTO } from './dto/auth-response.dto.js';
 import { LoginDto } from './dto/login.dto.js';
 import { RegisterResponseDTO } from './dto/register-response.dto.js';
@@ -97,6 +98,12 @@ export class AuthController {
   })
   async logout(@GetUser('id') userId: string): Promise<{ message: string }> {
     return await this.authService.logout(userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  async profile(@GetUser() user) {
+    return user;
   }
 
   @Post('login')
